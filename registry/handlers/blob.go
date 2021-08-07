@@ -34,7 +34,7 @@ func blobDispatcher(ctx *Context, r *http.Request) http.Handler {
 
 	mhandler := handlers.MethodHandler{
 		"GET":  http.HandlerFunc(blobHandler.GetBlob),
-		"HEAD": http.HandlerFunc(blobHandler.GetBlob),
+		"HEAD": http.HandlerFunc(blobHandler.HeadBlob),
 	}
 
 	if !ctx.readOnly {
@@ -49,6 +49,13 @@ type blobHandler struct {
 	*Context
 
 	Digest digest.Digest
+}
+
+
+func (bh *blobHandler) HeadBlob(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Length", "0")
+	w.Header().Set("Docker-Content-Digest", bh.Digest.String())
+	w.WriteHeader(http.StatusOK)
 }
 
 // GetBlob fetches the binary data from backend storage returns it in the

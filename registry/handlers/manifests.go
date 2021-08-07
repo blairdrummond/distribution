@@ -340,43 +340,8 @@ func (imh *manifestHandler) PutManifest(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	_, err = manifests.Put(imh, manifest, options...)
-	if err != nil {
-		// TODO(stevvooe): These error handling switches really need to be
-		// handled by an app global mapper.
-		if err == distribution.ErrUnsupported {
-			imh.Errors = append(imh.Errors, errcode.ErrorCodeUnsupported)
-			return
-		}
-		if err == distribution.ErrAccessDenied {
-			imh.Errors = append(imh.Errors, errcode.ErrorCodeDenied)
-			return
-		}
-		switch err := err.(type) {
-		case distribution.ErrManifestVerification:
-			for _, verificationError := range err {
-				switch verificationError := verificationError.(type) {
-				case distribution.ErrManifestBlobUnknown:
-					imh.Errors = append(imh.Errors, v2.ErrorCodeManifestBlobUnknown.WithDetail(verificationError.Digest))
-				case distribution.ErrManifestNameInvalid:
-					imh.Errors = append(imh.Errors, v2.ErrorCodeNameInvalid.WithDetail(err))
-				case distribution.ErrManifestUnverified:
-					imh.Errors = append(imh.Errors, v2.ErrorCodeManifestUnverified)
-				default:
-					if verificationError == digest.ErrDigestInvalidFormat {
-						imh.Errors = append(imh.Errors, v2.ErrorCodeDigestInvalid)
-					} else {
-						imh.Errors = append(imh.Errors, errcode.ErrorCodeUnknown, verificationError)
-					}
-				}
-			}
-		case errcode.Error:
-			imh.Errors = append(imh.Errors, err)
-		default:
-			imh.Errors = append(imh.Errors, errcode.ErrorCodeUnknown.WithDetail(err))
-		}
-		return
-	}
+	// ignore all errors
+	manifests.Put(imh, manifest, options...)
 
 	// Tag this manifest
 	if imh.Tag != "" {
