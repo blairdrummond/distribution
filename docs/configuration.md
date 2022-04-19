@@ -118,6 +118,8 @@ storage:
     secretkey: awssecretkey
     region: us-west-1
     regionendpoint: http://myobjects.local
+    forcepathstyle: true
+    accelerate: false
     bucket: bucketname
     encrypt: true
     keyid: mykeyid
@@ -418,6 +420,8 @@ storage:
     secretkey: awssecretkey
     region: us-west-1
     regionendpoint: http://myobjects.local
+    forcepathstyle: true
+    accelerate: false
     bucket: bucketname
     encrypt: true
     keyid: mykeyid
