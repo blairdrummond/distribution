@@ -474,7 +474,7 @@ func New(params DriverParameters) (*Driver, error) {
 	}
 
 	// sess, err = session.NewSession(awsConfig)
-	sess, err := session.NewSession(awsConfig.WithEndpoint(os.Getenv("AWS_ENDPOINT_URL_STS")))
+	sess, err = session.NewSession(awsConfig.WithEndpoint(os.Getenv("AWS_ENDPOINT_URL_STS")))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new session with aws config: %v", err)
 	}
