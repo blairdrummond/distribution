@@ -208,9 +208,9 @@ func FromParameters(parameters map[string]interface{}) (*Driver, error) {
 	}
 
 	regionName := parameters["region"]
-	if regionName == nil || fmt.Sprint(regionName) == "" {
-		return nil, fmt.Errorf("no region parameter provided")
-	}
+	//if regionName == nil || fmt.Sprint(regionName) == "" {
+	//	return nil, fmt.Errorf("no region parameter provided")
+	//}
 	region := fmt.Sprint(regionName)
 	// Don't check the region value if a custom endpoint is provided.
 	//if regionEndpoint == "" {
