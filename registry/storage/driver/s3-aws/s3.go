@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
+	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -212,11 +213,11 @@ func FromParameters(parameters map[string]interface{}) (*Driver, error) {
 	}
 	region := fmt.Sprint(regionName)
 	// Don't check the region value if a custom endpoint is provided.
-	if regionEndpoint == "" {
-		if _, ok := validRegions[region]; !ok {
-			return nil, fmt.Errorf("invalid region provided: %v", region)
-		}
-	}
+	//if regionEndpoint == "" {
+	//	if _, ok := validRegions[region]; !ok {
+	//		return nil, fmt.Errorf("invalid region provided: %v", region)
+	//	}
+	//}
 
 	bucket := parameters["bucket"]
 	if bucket == nil || fmt.Sprint(bucket) == "" {
@@ -449,7 +450,9 @@ func New(params DriverParameters) (*Driver, error) {
 	}
 
 	awsConfig.WithCredentials(creds)
-	awsConfig.WithRegion(params.Region)
+	if params.Region != "" {
+		awsConfig.WithRegion(params.Region)
+	}
 	awsConfig.WithDisableSSL(!params.Secure)
 
 	if params.UserAgent != "" || params.SkipVerify {
@@ -470,11 +473,14 @@ func New(params DriverParameters) (*Driver, error) {
 		}
 	}
 
-	sess, err = session.NewSession(awsConfig)
+	// sess, err = session.NewSession(awsConfig)
+	sess, err := session.NewSession(awsConfig.WithEndpoint(os.Getenv("AWS_ENDPOINT_URL_STS")))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new session with aws config: %v", err)
 	}
-	s3obj := s3.New(sess)
+
+	// s3obj := s3.New(sess)
+	s3obj := s3.New(sess, aws.NewConfig().WithEndpoint(os.Getenv("AWS_ENDPOINT_URL_S3")))
 
 	// enable S3 compatible signature v2 signing instead
 	if !params.V4Auth {
