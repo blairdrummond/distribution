@@ -426,7 +426,7 @@ func New(params DriverParameters) (*Driver, error) {
 		return nil, fmt.Errorf("on Amazon S3 this storage driver can only be used with v4 authentication")
 	}
 
-	awsConfig := aws.NewConfig()
+	awsConfig := aws.NewConfig().WithLogLevel(aws.LogDebugWithEventStreamBody).WithCredentialsChainVerboseErrors(true)
 	sess, err := session.NewSession()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new session: %v", err)
